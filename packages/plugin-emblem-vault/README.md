@@ -1,32 +1,92 @@
-# Sample Plugin for Eliza
+# @elizaos/plugin-emblem-vault
 
-The Sample Plugin for Eliza extends the functionality of the Eliza platform by providing additional actions, providers, evaluators, and more. This plugin is designed to be easily extendable and customizable to fit various use cases.
+This plugin provides actions and providers for interacting with Emblem Vault Wallet.
 
 ## Description
-The Sample Plugin offers a set of features that can be integrated into the Eliza platform to enhance its capabilities. Below is a high-level overview of the different components available in this plugin.
+
+The Emblem Vault plugin provides comprehensive functionality for interacting with Eblem Vault Wallet
+
+## Features
+
+- Query your solana and token balances
+- Transfer sol to other wallet addresses
+- Swap tokens
+
+## Installation
+
+```bash
+pnpm install @elizaos/plugin-emblem-vault
+```
+
+## Configuration
+
+### Required Environment Variables
+
+```env
+# Required
+EMBLEM_VAULT_API_KEY=your-api-key-here
+```
+
+### Configuration
+
+```json
+"settings": {
+    "secrets": {
+        "EMBLEM_VAULT_API_KEY": "your-api-key-here"
+    }
+}
+```
+
+**Example usage:**
+
+```env
+EMBLEM_VAULT_API_KEY=your-api-key-here
+```
 
 ## Actions
-- **createResourceAction**: This action enables the creation and management of generic resources. It can be customized to handle different types of resources and integrate with various data sources.
 
-## Providers
-- **sampleProvider**: This provider offers a mechanism to supply data or services to the plugin. It can be extended to include additional providers as needed.
+### 1. Solana Balance
 
-## Evaluators
-- **sampleEvaluator**: This evaluator provides a way to assess or analyze data within the plugin. It can be extended to include additional evaluators as needed.
+Query your solana and token balances:
 
-## Services
-- **[ServiceName]**: Description of the service and its functionality. This can be extended to include additional services as needed.
+```typescript
+// Example: Query your solana and token balances
+- What is my vault balance?
+- What is balance of USDC?
+```
 
-## Clients
-- **[ClientName]**: Description of the client and its functionality. This can be extended to include additional clients as needed.
+### 2. Solana Transfer
 
-## How to Extend
-To extend the Sample Plugin, you can add new actions, providers, evaluators, services, and clients by following the structure provided in the plugin. Each component can be customized to fit your specific requirements.
+Transfer sol to other wallet addresses:
 
-1. **Actions**: Add new actions by defining them in the `actions` array.
-2. **Providers**: Add new providers by defining them in the `providers` array.
-3. **Evaluators**: Add new evaluators by defining them in the `evaluators` array.
-4. **Services**: Add new services by defining them in the `services` array.
-5. **Clients**: Add new clients by defining them in the `clients` array.
+```typescript
+// Example: Transfer sol to other wallet addresses
+Transfer 1 SOL to 8ocp6g6BqyAn8gbjtQYJubtbkh1sU1ZMUXudKU3i7zFf
+```
 
-For more detailed information on how to extend the plugin, refer to the documentation provided in the Eliza platform.
+### 3. Solana Swap
+
+Swap tokens on the same chain using LiFi:
+
+```typescript
+Swap 1 LFG for USDC
+```
+
+## Development
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+3. Build the plugin:
+
+```bash
+pnpm run build
+```
+
+## License
+
+This plugin is part of the Eliza project. See the main project repository for license information.
