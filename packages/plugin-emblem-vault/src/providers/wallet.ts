@@ -18,16 +18,13 @@ import {
 
 export class EmblemVaultWalletProvider {
     private emblemVaultApiClient: EmblemVaultApiClient;
-    info: {
-        vaultId: string;
-        address: string;
-    };
+    info: VaultInfo;
 
     constructor(apiKey: string) {
         elizaLogger.info("Initializing Emblem Vault API client", apiKey);
         this.emblemVaultApiClient = new EmblemVaultApiClient(apiKey);
         this.emblemVaultApiClient.getVaultInfo().then((res) => {
-            if (!res.error) {
+            if (res.error) {
                 elizaLogger.error("Error getting vault info", res.error);
                 throw new Error(
                     "Failed to initialize Emblem Vault API client. Please check your API key."
@@ -43,24 +40,31 @@ export class EmblemVaultWalletProvider {
         return await this.emblemVaultApiClient.getVaultInfo();
     }
 
-    async solanaBalance(
-        address: string
-    ): Promise<ApiResponse<SolanaBalanceResponse>> {
+    async solanaBalance(address: string): Promise<SolanaBalanceResponse> {
         const balance = await this.emblemVaultApiClient.solanaBalance(address);
-        elizaLogger.info("Solana balance", balance);
-        return balance;
+        if (balance.error) {
+            throw new Error(balance.error);
+        }
+        return balance.data;
     }
 
-    async solanaSwap(
-        request: SolanaSwapRequest
-    ): Promise<ApiResponse<SolanaSwapResponse>> {
-        return await this.emblemVaultApiClient.solanaSwap(request);
+    async solanaSwap(request: SolanaSwapRequest): Promise<SolanaSwapResponse> {
+        const response = await this.emblemVaultApiClient.solanaSwap(request);
+        if (response.error) {
+            throw new Error(response.error);
+        }
+        return response.data;
     }
 
     async solanaTransfer(
         request: SolanaTransferRequest
-    ): Promise<ApiResponse<SolanaTransferResponse>> {
-        return await this.emblemVaultApiClient.solanaTransfer(request);
+    ): Promise<SolanaTransferResponse> {
+        const response =
+            await this.emblemVaultApiClient.solanaTransfer(request);
+        if (response.error) {
+            throw new Error(response.error);
+        }
+        return response.data;
     }
 }
 

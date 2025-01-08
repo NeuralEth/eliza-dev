@@ -54,7 +54,7 @@ export class EmblemVaultApiClient implements ApiClient {
 
             return { data };
         } catch (error) {
-            elizaLogger.error("Request error:", error);
+            elizaLogger.error("Request error: ", error);
             return {
                 data: null as unknown as T,
                 error: (error as Error).message,

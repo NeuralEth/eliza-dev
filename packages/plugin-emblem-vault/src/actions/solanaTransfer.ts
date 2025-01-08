@@ -28,23 +28,26 @@ export const solanaTransferAction: Action = {
         _options: unknown,
         callback: HandlerCallback
     ) => {
+        if (!state) {
+            state = (await runtime.composeState(message)) as State;
+        } else {
+            state = await runtime.updateRecentMessageState(state);
+        }
+
+        const provider = await initWalletProvider(runtime);
+
         try {
-            if (!state) {
-                state = (await runtime.composeState(message)) as State;
-            } else {
-                state = await runtime.updateRecentMessageState(state);
-            }
+            const balance = await provider.solanaBalance(
+                provider.info.solanaAddress
+            );
 
-            const provider = await initWalletProvider(runtime);
-            const balance = await provider.solanaBalance(provider.info.address);
-
-            const mintAddresses = balance.data.tokens.map(
+            const mintAddresses = balance.tokens.map(
                 (token) =>
                     `Name: ${token.market_data.name}, Mint: ${token.mint}, Symbol: ${token.market_data.symbol}`
             );
             mintAddresses.push(`Name: SOL, Mint: SOL, Symbol: SOL`);
             state.mintAddresses = mintAddresses.join("\n");
-            state.walletInfo = balance.data;
+            state.walletInfo = balance;
             state.vaultId = provider.info.vaultId;
 
             const context = composeContext({
@@ -75,10 +78,10 @@ export const solanaTransferAction: Action = {
 
             if (callback) {
                 callback({
-                    text: `Successfully transferred ${request.object.amount} tokens to ${request.object.to}\nTransaction Hash: ${transfer.data.fromRemoteSigner.signedTransaction.transactionSignature}`,
+                    text: `Successfully transferred ${request.object.amount} tokens to ${request.object.to}\nTransaction Hash: ${transfer.fromRemoteSigner.signedTransaction.transactionSignature}`,
                     content: {
                         success: true,
-                        hash: transfer.data.fromRemoteSigner.signedTransaction
+                        hash: transfer.fromRemoteSigner.signedTransaction
                             .transactionSignature,
                         amount: request.object.amount,
                         recipient: request.object.to,

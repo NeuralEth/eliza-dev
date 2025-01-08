@@ -42,15 +42,17 @@ export const solanaSwapAction: Action = {
             }
 
             const provider = await initWalletProvider(runtime);
-            const balance = await provider.solanaBalance(provider.info.address);
+            const balance = await provider.solanaBalance(
+                provider.info.solanaAddress
+            );
 
-            const mintAddresses = balance.data.tokens.map(
+            const mintAddresses = balance.tokens.map(
                 (token) =>
                     `Name: ${token.market_data.name}, Mint: ${token.mint}, Symbol: ${token.market_data.symbol}`
             );
             mintAddresses.push(`Name: SOL, Mint: SOL, Symbol: SOL`);
             state.mintAddresses = mintAddresses.join("\n");
-            state.walletInfo = balance.data;
+            state.walletInfo = balance;
             state.vaultId = provider.info.vaultId;
 
             const context = composeContext({
@@ -83,10 +85,10 @@ export const solanaSwapAction: Action = {
 
             if (callback) {
                 callback({
-                    text: `Swap of ${request.object.amount} ${request.object.fromMint} to ${request.object.toMint} completed successfully. Tx hash: ${swap.data.fromRemoteSigner.signedTransaction.transactionSignature}`,
+                    text: `Swap of ${request.object.amount} ${request.object.fromMint} to ${request.object.toMint} completed successfully.\n Transaction Hash: ${swap.fromRemoteSigner.signedTransaction.transactionSignature}`,
                     content: {
                         success: true,
-                        hash: swap.data.fromRemoteSigner.signedTransaction
+                        hash: swap.fromRemoteSigner.signedTransaction
                             .transactionSignature,
                         amount: request.object.amount,
                         fromMint: request.object.fromMint,
@@ -97,7 +99,7 @@ export const solanaSwapAction: Action = {
 
             return true;
         } catch (error) {
-            console.error("Failed to swap from vault", error);
+            elizaLogger.error("Failed to swap from vault", error);
             if (callback) {
                 callback({
                     text: `Error swapping from vault: ${error.message}`,

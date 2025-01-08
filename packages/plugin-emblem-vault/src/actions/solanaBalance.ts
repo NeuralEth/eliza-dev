@@ -36,16 +36,18 @@ export const solanaBalanceAction: Action = {
             }
 
             const provider = await initWalletProvider(runtime);
-            const balance = await provider.solanaBalance(provider.info.address);
+            const balance = await provider.solanaBalance(
+                provider.info.solanaAddress
+            );
 
             if (callback) {
                 callback({
-                    text: `Address: ${provider.info.address}\nYour vault balances are as follows:
+                    text: `Address: ${provider.info.solanaAddress}\nYour vault balances are as follows:
 
-SOL - ${balance.data.solBalance.sol} SOL
+SOL - ${balance.solBalance.sol} SOL
 
 Tokens:
-${balance.data.tokens
+${balance.tokens
     .map(
         (token) =>
             `- ${token.market_data.name} (${token.market_data.symbol}): ${token.balance}`
